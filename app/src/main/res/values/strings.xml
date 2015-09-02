@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Beacon Manager</string>
+    <string name="label_attachments">Attachments</string>
+
+    <string name="button_account">Pick Account</string>
+    <string name="text_auth_help">You must select a Google account to continue.
+        \n\nThe account you choose must be attached to your Google Developer Console project for the Proximity API with owner or editor access rights.
+        \n\nThis account will be used to authenticate all your requests with the API.
+    </string>
+    <string name="label_register">Register New Beacon</string>
+    <string name="action_register">Register Beacon</string>
+    <string name="action_add_attachment">Add Attachment</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="content_delete">Delete Attachment</string>
+    <string name="hint_attach">Enter some text to attach to this beacon.</string>
+    <string name="button_save">Save Attachment</string>
+    <string name="label_create">Create New Attachment</string>
+    <string name="hint_type">Enter an attachment type</string>
+    <string name="label_type">Attachment Type:</string>
+    <string name="label_attach">Attachment Text:</string>
+    <string name="prompt_register">To register this beacon, enter an optional description below and click "Register".</string>
+    <string name="hint_description">(Optional) Description</string>
+    <string name="empty">No Items Currently Available</string>
+</resources>

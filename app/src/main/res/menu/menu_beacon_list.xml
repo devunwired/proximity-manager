@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.android.proximitymanager.BeaconListActivity">
+    <item android:id="@+id/action_refresh"
+        android:icon="@android:drawable/ic_menu_rotate"
+        android:title="@string/action_refresh"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_register"
+        android:title="@string/action_register"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+</menu>
