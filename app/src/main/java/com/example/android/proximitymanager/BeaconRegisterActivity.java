@@ -27,9 +27,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.android.proximitymanager.api.ApiDataCallback;
 import com.example.android.proximitymanager.api.ProximityApi;
 import com.example.android.proximitymanager.data.Beacon;
-import com.example.android.proximitymanager.data.BeaconDataFetcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +39,7 @@ import java.util.List;
 
 public class BeaconRegisterActivity extends AppCompatActivity implements
         AdapterView.OnItemClickListener,
-        BeaconDataFetcher.OnBeaconDataListener {
+        ApiDataCallback {
     private static final String TAG =
             BeaconRegisterActivity.class.getSimpleName();
 
@@ -50,7 +50,7 @@ public class BeaconRegisterActivity extends AppCompatActivity implements
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeScanner mBluetoothLeScanner;
 
-    private BeaconDataFetcher mBeaconDataFetcher;
+    private ProximityApi mProximityApi;
     private AbleBeaconsAdapter mAdapter;
 
     @Override
@@ -67,8 +67,7 @@ public class BeaconRegisterActivity extends AppCompatActivity implements
         mBluetoothAdapter = manager.getAdapter();
         mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
 
-        mBeaconDataFetcher = new BeaconDataFetcher(ProximityApi.getInstance(this));
-        mBeaconDataFetcher.setBeaconDataListener(this);
+        mProximityApi = ProximityApi.getInstance(this);
     }
 
     @Override
@@ -97,7 +96,8 @@ public class BeaconRegisterActivity extends AppCompatActivity implements
             return;
         }
 
-        //Begin scanning for LE devices
+
+        mProximityApi.registerDataCallback(this);
         startScan();
     }
 
@@ -105,12 +105,7 @@ public class BeaconRegisterActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         stopScan();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mBeaconDataFetcher.setBeaconDataListener(null);
+        mProximityApi.unregisterDataCallback(this);
     }
 
     @Override
@@ -147,7 +142,7 @@ public class BeaconRegisterActivity extends AppCompatActivity implements
                         Beacon beacon = new Beacon(selected.advertisedId,
                                 Beacon.Status.ACTIVE,
                                 descriptionText.getText().toString());
-                        mBeaconDataFetcher.registerBeacon(beacon);
+                        mProximityApi.registerBeacon(beacon);
                     }
                 })
                 .create();
@@ -214,13 +209,14 @@ public class BeaconRegisterActivity extends AppCompatActivity implements
                     //Notify the adapter, and get beacon resource from API
                     boolean added = mAdapter.addDiscoveredBeacon(discovered);
                     if (added) {
-                        mBeaconDataFetcher.fetchBeaconData(discovered.advertisedId);
+                        mProximityApi.getBeacon(discovered.advertisedId);
                     }
                 }
             });
         }
     };
 
+    /* ApiDataCallback Methods */
 
     /*
      * Beacon data callback with latest response from API. Update
@@ -230,6 +226,11 @@ public class BeaconRegisterActivity extends AppCompatActivity implements
     @Override
     public void onBeaconResponse(Beacon beacon) {
         mAdapter.updateBeacon(beacon);
+    }
+
+    @Override
+    public void onAttachmentResponse() {
+        //Not used in this context
     }
 
     /* Custom List Adapter */

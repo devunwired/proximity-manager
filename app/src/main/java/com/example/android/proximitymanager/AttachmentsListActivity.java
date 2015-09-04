@@ -15,19 +15,25 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.android.proximitymanager.api.ApiDataCallback;
 import com.example.android.proximitymanager.api.AttachmentsLoader;
+import com.example.android.proximitymanager.api.ProximityApi;
 import com.example.android.proximitymanager.data.Attachment;
 import com.example.android.proximitymanager.data.AttachmentAdapter;
+import com.example.android.proximitymanager.data.Beacon;
 
 import java.util.List;
 
 
 public class AttachmentsListActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<List<Attachment>>,
-        AdapterView.OnItemClickListener {
+        AdapterView.OnItemClickListener,
+        ApiDataCallback {
 
     private ListView mList;
     private AttachmentAdapter mAdapter;
+
+    private ProximityApi mProximityApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,8 @@ public class AttachmentsListActivity extends AppCompatActivity implements
         mList.setAdapter(mAdapter);
         mList.setOnItemClickListener(this);
 
+        mProximityApi = ProximityApi.getInstance(this);
+
         getSupportLoaderManager().initLoader(0, getIntent().getExtras(), this);
     }
 
@@ -47,6 +55,13 @@ public class AttachmentsListActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         refreshLoader();
+        mProximityApi.registerDataCallback(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mProximityApi.unregisterDataCallback(this);
     }
 
     @Override
@@ -90,6 +105,8 @@ public class AttachmentsListActivity extends AppCompatActivity implements
                 .show();
     }
 
+    /* LoaderCallbacks Methods */
+
     @Override
     public Loader<List<Attachment>> onCreateLoader(int id, Bundle args) {
         return new AttachmentsLoader(this, args.getString(Intent.EXTRA_UID));
@@ -122,4 +139,15 @@ public class AttachmentsListActivity extends AppCompatActivity implements
                 .restartLoader(0, getIntent().getExtras(), this);
     }
 
+    /* ApiDataCallback Methods */
+
+    @Override
+    public void onBeaconResponse(Beacon beacon) {
+        refreshLoader();
+    }
+
+    @Override
+    public void onAttachmentResponse() {
+        refreshLoader();
+    }
 }

@@ -33,8 +33,6 @@
             android:parentActivityName=".AttachmentsListActivity"
             android:windowSoftInputMode="adjustResize"/>
 
-        <service android:name=".api.AttachmentService"
-            android:exported="false" />
     </application>
 
 </manifest>

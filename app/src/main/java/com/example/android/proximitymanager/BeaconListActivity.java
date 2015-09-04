@@ -62,7 +62,7 @@ public class BeaconListActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         if (ProximityApi.getInstance(this).hasToken()) {
-            getSupportLoaderManager().restartLoader(0, null, this);
+            refreshLoader();
         }
     }
 
@@ -77,8 +77,7 @@ public class BeaconListActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                getSupportLoaderManager()
-                        .restartLoader(0, null, this);
+                refreshLoader();
                 return true;
             case R.id.action_register:
                 Intent intent = new Intent(this, BeaconRegisterActivity.class);
@@ -125,4 +124,7 @@ public class BeaconListActivity extends AppCompatActivity implements
         mAdapter.clear();
     }
 
+    private void refreshLoader() {
+        getSupportLoaderManager().restartLoader(0, null, this);
+    }
 }

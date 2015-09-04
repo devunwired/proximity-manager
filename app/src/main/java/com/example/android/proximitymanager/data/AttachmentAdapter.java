@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.android.proximitymanager.R;
-import com.example.android.proximitymanager.api.AttachmentService;
+import com.example.android.proximitymanager.api.ProximityApi;
 
 
 public class AttachmentAdapter extends ArrayAdapter<Attachment> implements
@@ -51,7 +51,8 @@ public class AttachmentAdapter extends ArrayAdapter<Attachment> implements
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        AttachmentService.delete(getContext(), item.name);
+                        ProximityApi.getInstance(getContext())
+                                .deleteAttachment(item);
                     }
                 })
                 .show();

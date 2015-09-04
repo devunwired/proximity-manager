@@ -11,20 +11,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.example.android.proximitymanager.api.AttachmentService;
+import com.example.android.proximitymanager.api.ApiDataCallback;
 import com.example.android.proximitymanager.api.NamespacesLoader;
+import com.example.android.proximitymanager.api.ProximityApi;
+import com.example.android.proximitymanager.data.Beacon;
 import com.example.android.proximitymanager.data.Namespace;
 
 import java.util.List;
 
 public class AttachmentCreateActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<List<Namespace>>,
-        View.OnClickListener {
+        View.OnClickListener,
+        ApiDataCallback {
 
     private Spinner mNamespaceSelect;
     private EditText mAttachmentType, mAttachmentText;
     private Button mSaveButton;
     private ArrayAdapter<Namespace> mNamespaceAdapter;
+
+    private ProximityApi mProximityApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,8 @@ public class AttachmentCreateActivity extends AppCompatActivity implements
         mNamespaceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mNamespaceSelect.setAdapter(mNamespaceAdapter);
 
+        mProximityApi = ProximityApi.getInstance(this);
+
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -59,13 +66,15 @@ public class AttachmentCreateActivity extends AppCompatActivity implements
 
         final String data = mAttachmentText.getText().toString();
 
-        AttachmentService.create(this, beaconName, data, namespacedType);
+        mProximityApi.createAttachment(beaconName, data, namespacedType);
         finish();
     }
 
     private void updateSaveButton() {
-        mSaveButton.setEnabled( !mNamespaceAdapter.isEmpty() );
+        mSaveButton.setEnabled(!mNamespaceAdapter.isEmpty());
     }
+
+    /* LoaderCallbacks Methods */
 
     @Override
     public Loader<List<Namespace>> onCreateLoader(int id, Bundle args) {
@@ -85,5 +94,17 @@ public class AttachmentCreateActivity extends AppCompatActivity implements
     public void onLoaderReset(Loader<List<Namespace>> loader) {
         mNamespaceAdapter.clear();
         updateSaveButton();
+    }
+
+    /* ApiDataCallback Methods */
+
+    @Override
+    public void onBeaconResponse(Beacon beacon) {
+        //Not used in this context
+    }
+
+    @Override
+    public void onAttachmentResponse() {
+
     }
 }
